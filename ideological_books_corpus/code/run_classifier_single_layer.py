@@ -193,6 +193,38 @@ class ColaProcessor(DataProcessor):
                 InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         return examples
 
+class PoliticalProcessor(DataProcessor):
+    """Processor for the AG data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        train_data = pd.read_csv(os.path.join(data_dir, "train.csv"),header=None, sep=";").values
+        return self._create_examples(train_data, "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        dev_data = pd.read_csv(os.path.join(data_dir, "test.csv"),header=None, sep=";").values
+        return self._create_examples(dev_data, "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["Liberal","Conservative","Neutral"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(line[1])
+            label = tokenization.convert_to_unicode(str(line[0]))
+            if i%1000==0:
+                print(i)
+                print("guid=",guid)
+                print("text_a=",text_a)
+                print("label=",label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
 
 
 class AGNewsProcessor(DataProcessor):
@@ -759,6 +791,7 @@ def main():
     args = parser.parse_args()
 
     processors = {
+        "political": PoliticalProcessor,
         "ag": AGNewsProcessor,
         "ag_sep": AGNewsProcessor_sep,
         "ag_sep_aug": AGNewsProcessor_sep_aug,
