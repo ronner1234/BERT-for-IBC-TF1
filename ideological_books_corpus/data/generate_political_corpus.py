@@ -4,8 +4,16 @@ import numpy as np
 
 nlp=spacy.load("en_core_web_md") # load sentence tokenzation
 
-test_data=pd.read_csv("test.csv", header=None, sep=";").values # read testing data
-train_data=pd.read_csv("train.csv", header=None, sep=";").values # read training data
+input_data=pd.read_csv("ideological_books_corpus.csv", header=None, sep="@").values # read testing data
+
+train_data = input_data[input_data.index % 10!=0]
+test_data = input_data[input_data.index % 10==0]
+
+train_data.to_csv("train.csv", sep='@')
+test_data.to_csv("test.csv", sep='@')
+
+train_data=pd.read_csv("train.csv", header=None, sep="@").values # read training data
+test_data=pd.read_csv("test.csv", header=None, sep="@").values # read testing data
 
 test=[]
 train=[]
