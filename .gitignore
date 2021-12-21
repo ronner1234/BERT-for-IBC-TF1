@@ -1,3 +1,6 @@
 /data/
 /codes/
-/ideological_books_corpus/data/output/
+/ideological_books_corpus/data/output_20_80/
+/ideological_books_corpus/BERT/pretraining_output/model.ckpt-4000.data-00000-of-00001
+/ideological_books_corpus/BERT/pretraining_output/model.ckpt-4000.index
+/ideological_books_corpus/BERT/pretraining_output/model.ckpt-4000.meta

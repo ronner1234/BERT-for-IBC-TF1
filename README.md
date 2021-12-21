@@ -1,8 +1,7 @@
 # How to Fine-Tune BERT for Classification of Political Speeches?
 
-This is the code and source for the paper [How to Fine-Tune BERT for Text Classification?](https://arxiv.org/abs/1905.05583)
-
-In this paper, we conduct exhaustive experiments to investigate different fine-tuning methods of BERT on text classification task and provide a general solution for BERT fine-tuning.
+This is the code and source for the paper [How to Fine-Tune BERT for Text Classification?](https://arxiv.org/abs/1905.05583) and a fork of the repository [
+BERT4doc-Classification](https://github.com/xuyige/BERT4doc-Classification). In the above paper, several experiments to investigate different fine-tuning methods of BERT on text classification task were conducted and provide a general solution for BERT fine-tuning.
 
 
 ## Requirements
@@ -42,8 +41,8 @@ To obtain the full dataset, or for any questions / comments about the data, send
 We devided the Ideological Books Corpus into two csv files. One for training the model, the other for testing the model:
 
 ```shell
-1: train.csv  (95% of data)
-2: test.csv   (5% of data)
+1: train.csv  (80% of data)
+2: test.csv   (20% of data)
 ```
 
 ### 2) Download Google BERT-Base:
@@ -78,7 +77,7 @@ Save checkpoints after steps: 10.000
 
 
 ```shell
-python run_pretraining.py --input_file=../data/tf_political_corpus.tfrecord --output_dir=../BERT/pretraining_output --do_train=True --do_eval=True --bert_config_file=../BERT/bert_config.json --init_checkpoint=../BERT/bert_model.ckpt --train_batch_size=32 --max_seq_length=128 --max_predictions_per_seq=20 --num_train_steps=100000 --num_warmup_steps=10000 --save_checkpoints_steps=10000 --learning_rate=5e-5
+python run_pretraining.py --input_file=../data/tf_political_corpus.tfrecord --output_dir=../BERT/pretraining_output --do_train=True --do_eval=True --bert_config_file=../BERT/bert_config.json --init_checkpoint=../BERT/bert_model.ckpt --train_batch_size=20 --max_seq_length=128 --max_predictions_per_seq=20 --num_train_steps=100000 --num_warmup_steps=10000 --save_checkpoints_steps=10000 --learning_rate=5e-5
 ```
 
 
@@ -95,7 +94,7 @@ python convert_tf_checkpoint_to_pytorch.py --tf_checkpoint_path ../BERT/pretrain
 #### Fine-Tuning on downstream tasks
 
 ```shell
-python run_classifier_single_layer.py --task_name political --do_train --do_eval --do_lower_case --data_dir ../data/ --vocab_file ../BERT/vocab.txt --bert_config_file ../BERT/bert_config.json --init_checkpoint ../BERT/pretraining_output/pytorch_model.bin --max_seq_length 512 --train_batch_size 12 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ../data/output/ --seed 42 --layers 11 10 --trunc_medium -1
+python run_classifier_single_layer.py --task_name political --do_train --do_eval --do_lower_case --data_dir ../data/ --vocab_file ../BERT/vocab.txt --bert_config_file ../BERT/bert_config.json --init_checkpoint ../BERT/pretraining_output/pytorch_model.bin --max_seq_length 512 --train_batch_size 20 --learning_rate 1e-5 --num_train_epochs 8.0 --output_dir ../data/output/ --seed 42 --layers 11 10 --trunc_medium -1
 ```
 
 where ``num_train_epochs`` can be 3.0, 4.0, or 6.0.
@@ -117,23 +116,3 @@ taking hidden state of `[CLS]` token as features.
 ``layer_learning_rate`` and ``layer_learning_rate_decay`` in ``run_classifier_discriminative.py``
 indicates layer-wise decreasing layer rate (See Section 5.3.4).
 
-
-## Further Pre-Trained Checkpoints
-
-We upload IMDb-based further pre-trained checkpoints at
-[here](https://drive.google.com/drive/folders/1Rbi0tnvsQrsHvT_353pMdIbRwDlLhfwM).
-
-For other checkpoints, please contact us by e-mail.
-
-## How to cite our paper
-
-```text
-@inproceedings{sun2019fine,
-  title={How to fine-tune {BERT} for text classification?},
-  author={Sun, Chi and Qiu, Xipeng and Xu, Yige and Huang, Xuanjing},
-  booktitle={China National Conference on Chinese Computational Linguistics},
-  pages={194--206},
-  year={2019},
-  organization={Springer}
-}
-```
